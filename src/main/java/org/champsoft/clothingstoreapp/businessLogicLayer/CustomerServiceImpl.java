@@ -25,8 +25,8 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public List<CustomerResponseModel> getCustomers() {
-        List<Customer> customers = this.customerRepository.findAll();
-        return this.customerResponseMapper.entityListToResponseModelList(customers);
+        List<Customer> customers = customerRepository.findAll();
+        return customerResponseMapper.entityListToResponseModelList(customers);
     }
 
     @Override
@@ -55,10 +55,9 @@ public class CustomerServiceImpl implements CustomerService{
                 message = "Customer with " + customerId + " already exists";
             } else {
                 Customer customer = this.customerRequestMapper.requestModelToEntity(newCustomerData);
-                customer.setCustomerIdentifier(newCustomerData.getCustomerIdentifier());
+                customer.setCustomerIdentifier(customerId);
                 customer.setPassword(newCustomerData.getPassword1());
-                Customer savedCustomer = this.customerRepository.save(customer);
-                System.out.println(savedCustomer);
+                this.customerRepository.save(customer);
                 message = "Customer saved successfully";
 
 //                if (savedCustomer != null){
@@ -88,11 +87,7 @@ public class CustomerServiceImpl implements CustomerService{
                 customer.setCustomerIdentifier(customerId); //important
                 customer.setId(foundCustomer.getId());
                 Customer savedCustomer = this.customerRepository.save(customer);
-                message = "Customer updated successfully";
-//                if (savedCustomer != null)
-//                    message = "Customer updated successfully";
-//                else
-//                    message = "Could not update customer in repository";
+                message = "Customer with id : " + customerId + " updated successfully";
             }
         }
         return message;
@@ -110,4 +105,5 @@ public class CustomerServiceImpl implements CustomerService{
         }
         return message;
     }
+
 }

@@ -26,4 +26,8 @@ public class Customer {
     private String  username;
     private String  password;
 
+    private String streetAddress;
+    private String postalCode;
+    private String city;
+    private String province;
 }
