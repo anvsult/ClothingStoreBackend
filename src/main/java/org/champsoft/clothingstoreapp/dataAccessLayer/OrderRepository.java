@@ -9,4 +9,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
 
     Order findOrderByOrderIdentifier(String orderId);
+
+    List<Order> findOrdersByCustomerIdentifier(String customerId);
+
+    List<Order> findCustomersByProductIdentifier(String productId);
+
+    List<Order> findOrdersByProductIdentifier(String productId);
 }

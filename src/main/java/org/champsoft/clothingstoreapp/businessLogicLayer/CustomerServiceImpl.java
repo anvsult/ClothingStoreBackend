@@ -1,14 +1,15 @@
 package org.champsoft.clothingstoreapp.businessLogicLayer;
 
-import org.champsoft.clothingstoreapp.dataAccessLayer.Customer;
-import org.champsoft.clothingstoreapp.dataAccessLayer.CustomerRepository;
+import org.champsoft.clothingstoreapp.dataAccessLayer.*;
 import org.champsoft.clothingstoreapp.dataMapperLayer.CustomerRequestMapper;
 import org.champsoft.clothingstoreapp.dataMapperLayer.CustomerResponseMapper;
 import org.champsoft.clothingstoreapp.presentationLayer.CustomerRequestModel;
 import org.champsoft.clothingstoreapp.presentationLayer.CustomerResponseModel;
+import org.champsoft.clothingstoreapp.presentationLayer.ProductResponseModel;
 import org.champsoft.clothingstoreapp.utilities.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,11 +17,15 @@ public class CustomerServiceImpl implements CustomerService{
     private final CustomerRepository customerRepository;
     private final CustomerResponseMapper customerResponseMapper;
     private final CustomerRequestMapper customerRequestMapper;
+    private final ProductService productService;
+    private final OrderRepository orderRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerResponseMapper customerResponseMapper, CustomerRequestMapper customerRequestMapper) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerResponseMapper customerResponseMapper, CustomerRequestMapper customerRequestMapper, ProductService productService, OrderRepository orderRepository) {
         this.customerRepository = customerRepository;
         this.customerResponseMapper = customerResponseMapper;
         this.customerRequestMapper = customerRequestMapper;
+        this.productService = productService;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -60,11 +65,6 @@ public class CustomerServiceImpl implements CustomerService{
                 this.customerRepository.save(customer);
                 message = "Customer saved successfully";
 
-//                if (savedCustomer != null){
-//                    message = "Customer saved successfully";
-//                } else {
-//                    message = "Could not save new customer into repository";
-//                }
             }
         }
         return message;
@@ -104,6 +104,19 @@ public class CustomerServiceImpl implements CustomerService{
             message = "Customer with id: " + customerId + " deleted successfully";
         }
         return message;
+    }
+
+    @Override
+    public List<CustomerResponseModel> getCustomersByProductId(String productId) {
+        List<Order> orders = orderRepository.findCustomersByProductIdentifier(productId);
+        List<CustomerResponseModel> customerResponseModels = new ArrayList<>();
+        for (Order order: orders) {
+            String customerId = order.getCustomerIdentifier();
+            Customer customer = customerRepository.findCustomerByCustomerIdentifier(customerId);
+            CustomerResponseModel customerResponseModel = customerResponseMapper.entityToResponseModel(customer);
+            customerResponseModels.add(customerResponseModel);
+        }
+        return customerResponseModels;
     }
 
 }

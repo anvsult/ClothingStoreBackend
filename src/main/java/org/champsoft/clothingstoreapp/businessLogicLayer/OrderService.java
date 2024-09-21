@@ -16,4 +16,8 @@ public interface OrderService {
     String updateOrder(String orderId, OrderRequestModel newOrderData);
 
     String deleteOrderByOrderId(String orderId);
+
+    List<OrderResponseModel> getOrdersByCustomerId(String customerId);
+
+    List<OrderResponseModel> getOrdersByProductId(String productId);
 }

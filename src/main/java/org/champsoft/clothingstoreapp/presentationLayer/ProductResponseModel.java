@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.champsoft.clothingstoreapp.dataAccessLayer.ProductStatus;
+
 import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,6 +18,6 @@ public class ProductResponseModel {
     private String size;
     private BigDecimal price;
     private int quantity;
-    private String product_status;
+    private ProductStatus product_status;
 
 }

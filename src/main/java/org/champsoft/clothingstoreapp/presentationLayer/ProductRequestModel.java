@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.champsoft.clothingstoreapp.dataAccessLayer.ProductStatus;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +17,5 @@ public class ProductRequestModel {
     private String size;
     private String price;
     private int quantity;
-    private String product_status;
+    private ProductStatus product_status;
 }

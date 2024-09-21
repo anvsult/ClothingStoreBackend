@@ -16,4 +16,5 @@ public interface CustomerService {
 
     String deleteCustomerByCustomerId(String customerId);
 
+    List<CustomerResponseModel> getCustomersByProductId(String productId);
 }

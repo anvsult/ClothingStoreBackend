@@ -29,7 +29,8 @@ public class Product {
     private BigDecimal price;
     private int quantity;
 
-    private String product_status;
+    @Enumerated(EnumType.STRING)
+    private ProductStatus product_status;
 
 
 }

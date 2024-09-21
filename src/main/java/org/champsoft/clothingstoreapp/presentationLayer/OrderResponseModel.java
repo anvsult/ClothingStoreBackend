@@ -15,14 +15,25 @@ import java.math.BigDecimal;
 
 public class OrderResponseModel {
     private String orderIdentifier;
-    private String productIdentifier;
     private String name;
-    private String price;
-    private String customerIdentifier;
-
-
+    private BigDecimal price;
     private DeliveryStatus deliveryStatus;
     private BigDecimal shippingPrice;
     private BigDecimal totalPrice;
+
+    //THE CUSTOMER WHO BOUGHT THE ORDER
+    private String customerIdentifier;
+    private String lastName;
+    private String firstName;
+    private String emailAddress;
+    private String streetAddress;
+    private String postalCode;
+    private String city;
+    private String province;
+
+    //THE PRODUCT IN THE ORDER
+    private String productIdentifier;
+    private String description;
+    private String size;
 
 }

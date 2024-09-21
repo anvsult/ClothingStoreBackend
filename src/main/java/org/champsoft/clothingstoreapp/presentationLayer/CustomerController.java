@@ -39,6 +39,10 @@ public class CustomerController {
         return this.customerService.deleteCustomerByCustomerId(customer_id);
     }
 
+    @GetMapping("/product/{product_id}")
+    public List<CustomerResponseModel> getCustomersByProductId(@PathVariable String product_id) {
+        return this.customerService.getCustomersByProductId(product_id);
+    }
 }
 
 

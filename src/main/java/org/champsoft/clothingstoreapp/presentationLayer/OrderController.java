@@ -36,9 +36,21 @@ public class OrderController {
     public String updateOrder(@PathVariable String order_id, @RequestBody OrderRequestModel newOrderData){
         return this.orderService.updateOrder(order_id, newOrderData);
     }
-    @DeleteMapping("delete-order/{order_id}")
+    @DeleteMapping("/{order_id}")
     public String deleteOrder(@PathVariable String order_id){
         return orderService.deleteOrderByOrderId(order_id);
+    }
+
+    ////
+
+    @GetMapping("/customer/{customer_id}")
+    public List<OrderResponseModel> getOrdersByCustomerId(@PathVariable String customer_id) {
+        return this.orderService.getOrdersByCustomerId(customer_id);
+    }
+
+    @GetMapping("product/{product_id}")
+    public List<OrderResponseModel> getOrdersByProductId(@PathVariable String product_id) {
+        return this.orderService.getOrdersByProductId(product_id);
     }
 
 }

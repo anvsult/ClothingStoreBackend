@@ -31,12 +31,17 @@ public class ProductController {
     }
     @PostMapping("/add-product")
     public String addProduct(@RequestBody ProductRequestModel newProductData) {
-        return this.productService.addProduct(newProductData);
+        return productService.addProduct(newProductData);
     }
 
-    @PutMapping("{product_id}")
+    @PutMapping("/{product_id}")
     public String updateProduct(@PathVariable String product_id, @RequestBody ProductRequestModel newProductData){
         return productService.updateProduct(product_id, newProductData);
+    }
+
+    @GetMapping("/order/{order_id}")
+    public ProductResponseModel getProductByOrderId(@PathVariable String order_id) {
+        return productService.getProductByOrderId(order_id);
     }
 
 }

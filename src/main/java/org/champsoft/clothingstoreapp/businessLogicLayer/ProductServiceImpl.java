@@ -60,6 +60,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public ProductResponseModel getProductByOrderId(String orderId) {
+        Order order = orderRepository.findOrderByOrderIdentifier(orderId);
+        Product product = productRepository.findProductByProductIdentifier(order.getProductIdentifier());
+        return productResponseMapper.entityToResponseModel(product);
+    }
+
+    @Override
     public String updateProduct(String productId, ProductRequestModel newProductData) {
         String message = "";
         Product foundProduct = productRepository.findProductByProductIdentifier(productId);
