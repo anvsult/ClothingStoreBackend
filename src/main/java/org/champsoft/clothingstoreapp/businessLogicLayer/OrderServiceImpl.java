@@ -1,6 +1,7 @@
 package org.champsoft.clothingstoreapp.businessLogicLayer;
 
-import org.champsoft.clothingstoreapp.dataAccessLayer.*;
+import org.champsoft.clothingstoreapp.dataAccessLayer.Order;
+import org.champsoft.clothingstoreapp.dataAccessLayer.OrderRepository;
 import org.champsoft.clothingstoreapp.dataMapperLayer.OrderRequestMapper;
 import org.champsoft.clothingstoreapp.dataMapperLayer.OrderResponseMapper;
 import org.champsoft.clothingstoreapp.presentationLayer.CustomerResponseModel;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -33,7 +35,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseModel> getOrders() {
         List<Order> orders = this.orderRepository.findAll();
         List<OrderResponseModel> orderResponseModels = new ArrayList<>();
-        for (Order order: orders) {
+        for (Order order : orders) {
             String customerId = order.getCustomerIdentifier();
             String productId = order.getProductIdentifier();
             CustomerResponseModel customerWhoBought = customerService.getCustomerById(customerId);
@@ -53,53 +55,54 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String addOrder(OrderRequestModel newOrderData) {
-        String message = "";
         Order order = orderRequestMapper.requestModelToEntity(newOrderData);
         CustomerResponseModel foundCustomer = customerService.getCustomerById(order.getCustomerIdentifier());
         ProductResponseModel foundProduct = productService.getProductById(order.getProductIdentifier());
 
         if (foundCustomer == null) {
-            message = "Customer with " + order.getCustomerIdentifier() + " not found";
+            return "Customer with " + order.getCustomerIdentifier() + " not found";
         }
         if (foundProduct == null) {
             return "Product with " + order.getProductIdentifier() + " not found";
         }
-        order.setName(foundProduct.getName());
+
+        String orderId = UUID.randomUUID().toString();
+        while (this.orderRepository.findOrderByOrderIdentifier(orderId) != null) {
+            orderId = UUID.randomUUID().toString();
+        }
+        order.setOrderIdentifier(orderId);
+//        order.setName(foundProduct.getName());
         order.setPrice(foundProduct.getPrice());
         order.setTotalPrice(order.getPrice().add(order.getShippingPrice()));
-        order.setDeliveryStatus(DeliveryStatus.PENDING);
+//        order.setDeliveryStatus(DeliveryStatus.PENDING);
         orderRepository.save(order);
-        message = "Order with id : " + order.getOrderIdentifier() + " added successfully";
-        return message;
+        return "Order with id : " + order.getOrderIdentifier() + " added successfully";
     }
 
     @Override
     public String updateOrder(String orderId, OrderRequestModel newOrderData) {
-        String message = "";
         Order foundOrder = orderRepository.findOrderByOrderIdentifier(orderId);
-        if (foundOrder == null){
-            message = "Order with " + orderId + " not found";
-        } else {
-            Order order = orderRequestMapper.requestModelToEntity(newOrderData);
-            order.setOrderIdentifier(orderId);
-            order.setId(foundOrder.getId());
+        if (foundOrder == null)
+            return "Order with " + orderId + " not found";
 
-            order.setName(foundOrder.getName());
-            order.setPrice(foundOrder.getPrice());
-            order.setDeliveryStatus(foundOrder.getDeliveryStatus());
-            order.setTotalPrice(order.getPrice().add(order.getShippingPrice()));
+        foundOrder.setCustomerIdentifier(newOrderData.getCustomerIdentifier());
+        foundOrder.setProductIdentifier(newOrderData.getProductIdentifier());
 
-            this.orderRepository.save(order);
-            message = "Order with id : " + orderId + " updated successfully";
-        }
-        return message;
+        foundOrder.setName(newOrderData.getName());
+//        foundOrder.setPrice(newOrderData.getPrice());
+        foundOrder.setDeliveryStatus(newOrderData.getDeliveryStatus());
+//        foundOrder.setTotalPrice(newOrderData.getPrice().add(newOrderData.getShippingPrice()));
+
+        orderRepository.save(foundOrder);
+        return "Order with id : " + orderId + " updated successfully";
+
     }
 
     @Override
     public String deleteOrderByOrderId(String orderId) {
         String message = "";
         Order foundOrder = orderRepository.findOrderByOrderIdentifier(orderId);
-        if (foundOrder == null){
+        if (foundOrder == null) {
             message = "Order with " + orderId + " not found";
         } else {
             orderRepository.delete(foundOrder);
@@ -112,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseModel> getOrdersByCustomerId(String customerId) {
         List<Order> orders = orderRepository.findOrdersByCustomerIdentifier(customerId);
         List<OrderResponseModel> orderResponseModels = new ArrayList<>();
-        for (Order order: orders) {
+        for (Order order : orders) {
             String productId = order.getProductIdentifier();
             CustomerResponseModel customerWhoBought = customerService.getCustomerById(customerId);
             ProductResponseModel productBought = productService.getProductById(productId);
@@ -127,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseModel> getOrdersByProductId(String productId) {
         List<Order> orders = orderRepository.findOrdersByProductIdentifier(productId);
         List<OrderResponseModel> orderResponseModels = new ArrayList<>();
-        for (Order order: orders) {
+        for (Order order : orders) {
             String customerId = order.getCustomerIdentifier();
             CustomerResponseModel customerWhoBought = customerService.getCustomerById(customerId);
             ProductResponseModel productBought = productService.getProductById(productId);

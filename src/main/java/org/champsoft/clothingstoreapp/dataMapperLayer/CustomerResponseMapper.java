@@ -9,5 +9,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CustomerResponseMapper {
     CustomerResponseModel entityToResponseModel(Customer customer);
+
     List<CustomerResponseModel> entityListToResponseModelList(List<Customer> customers);
 }

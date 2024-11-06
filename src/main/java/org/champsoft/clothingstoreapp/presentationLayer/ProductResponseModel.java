@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.champsoft.clothingstoreapp.dataAccessLayer.ProductStatus;
 
 import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter

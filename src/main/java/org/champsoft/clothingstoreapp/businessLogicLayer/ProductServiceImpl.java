@@ -12,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final ProductResponseMapper productResponseMapper;
@@ -27,7 +28,6 @@ public class ProductServiceImpl implements ProductService{
         this.productResponseMapper = productResponseMapper;
         this.productRequestMapper = productRequestMapper;
     }
-
 
 
     @Override
@@ -46,16 +46,15 @@ public class ProductServiceImpl implements ProductService{
     public String addProduct(ProductRequestModel newProductData) {
         String message = "";
 
-        String newProductId = newProductData.getProductIdentifier();
-        Product foundProduct = this.productRepository.findProductByProductIdentifier(newProductId);
-        if (foundProduct != null) {
-            message = "Product with " + newProductId + " already exists";
-        } else {
-            Product newProduct = this.productRequestMapper.requestModelToEntity(newProductData);
-            newProduct.setProductIdentifier(newProductId);
-            this.productRepository.save(newProduct);
-            message = "Product saved successfully";
+        String productId = UUID.randomUUID().toString();
+        while (this.productRepository.findProductByProductIdentifier(productId) != null) {
+            productId = UUID.randomUUID().toString();
         }
+        Product newProduct = this.productRequestMapper.requestModelToEntity(newProductData);
+        newProduct.setProductIdentifier(productId);
+        this.productRepository.save(newProduct);
+        message = "Product saved successfully";
+
         return message;
     }
 
@@ -68,21 +67,25 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public String updateProduct(String productId, ProductRequestModel newProductData) {
-        String message = "";
+
         Product foundProduct = productRepository.findProductByProductIdentifier(productId);
-        if (foundProduct == null) {
-            message = "Product with " + productId + " not found";
-        } else {
-            Product product = productRequestMapper.requestModelToEntity(newProductData);
-            product.setProductIdentifier(productId);
-            productRepository.save(product);
-            message = "Product with id: " + productId + " updated successfully";
-        }
-        return message;
+        if (foundProduct == null)
+            return "Product with " + productId + " not found";
+
+        foundProduct.setName(newProductData.getName());
+        foundProduct.setDescription(newProductData.getDescription());
+        foundProduct.setSize(newProductData.getSize());
+        foundProduct.setPrice(newProductData.getPrice());
+        foundProduct.setQuantity(newProductData.getQuantity());
+//        foundProduct.setProductStatus(newProductData.getProductStatus());
+
+        productRepository.save(foundProduct);
+        return "Product with id: " + productId + " updated successfully";
     }
 
+
     @Override
-    public String deleteProductByProductId(String productId){
+    public String deleteProductByProductId(String productId) {
         String message = "";
         Product foundProduct = productRepository.findProductByProductIdentifier(productId);
         if (foundProduct == null) {

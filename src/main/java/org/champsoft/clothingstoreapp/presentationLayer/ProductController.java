@@ -8,10 +8,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@CrossOrigin(origins = "http://localhost:3000") // Enables CORS for this controller only
 public class ProductController {
     private final ProductService productService;
+
     @Autowired
-    public ProductController(ProductService productService){
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
@@ -29,13 +31,14 @@ public class ProductController {
     public String deleteProductById(@PathVariable String product_id) {
         return productService.deleteProductByProductId(product_id);
     }
-    @PostMapping("/add-product")
+
+    @PostMapping()
     public String addProduct(@RequestBody ProductRequestModel newProductData) {
         return productService.addProduct(newProductData);
     }
 
     @PutMapping("/{product_id}")
-    public String updateProduct(@PathVariable String product_id, @RequestBody ProductRequestModel newProductData){
+    public String updateProduct(@PathVariable String product_id, @RequestBody ProductRequestModel newProductData) {
         return productService.updateProduct(product_id, newProductData);
     }
 

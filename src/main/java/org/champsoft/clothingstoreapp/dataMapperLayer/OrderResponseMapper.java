@@ -7,8 +7,6 @@ import org.champsoft.clothingstoreapp.presentationLayer.ProductResponseModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface OrderResponseMapper {
     @Mapping(target = "streetAddress", expression = "java(customer.getStreetAddress())")
@@ -26,6 +24,5 @@ public interface OrderResponseMapper {
     @Mapping(target = "price", expression = "java(order.getPrice())")
     @Mapping(target = "customerIdentifier", expression = "java(order.getCustomerIdentifier())")
     @Mapping(target = "productIdentifier", expression = "java(order.getProductIdentifier())")
-
     OrderResponseModel entityToResponseModel(Order order, CustomerResponseModel customer, ProductResponseModel product);
 }

@@ -1,19 +1,22 @@
 package org.champsoft.clothingstoreapp.businessLogicLayer;
 
-import org.champsoft.clothingstoreapp.dataAccessLayer.*;
+import org.champsoft.clothingstoreapp.dataAccessLayer.Customer;
+import org.champsoft.clothingstoreapp.dataAccessLayer.CustomerRepository;
+import org.champsoft.clothingstoreapp.dataAccessLayer.Order;
+import org.champsoft.clothingstoreapp.dataAccessLayer.OrderRepository;
 import org.champsoft.clothingstoreapp.dataMapperLayer.CustomerRequestMapper;
 import org.champsoft.clothingstoreapp.dataMapperLayer.CustomerResponseMapper;
 import org.champsoft.clothingstoreapp.presentationLayer.CustomerRequestModel;
 import org.champsoft.clothingstoreapp.presentationLayer.CustomerResponseModel;
-import org.champsoft.clothingstoreapp.presentationLayer.ProductResponseModel;
 import org.champsoft.clothingstoreapp.utilities.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerResponseMapper customerResponseMapper;
     private final CustomerRequestMapper customerRequestMapper;
@@ -38,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService{
     public CustomerResponseModel getCustomerById(String customerId) {
         Customer customer = this.customerRepository.findCustomerByCustomerIdentifier(customerId);
         CustomerResponseModel result = null;
-        if (customer == null){
+        if (customer == null) {
             throw new NotFoundException("Customer with " + customerId + " not found");
         } else {
             result = this.customerResponseMapper.entityToResponseModel(customer);
@@ -51,21 +54,19 @@ public class CustomerServiceImpl implements CustomerService{
         String message = "";
         String pw1 = newCustomerData.getPassword1();
         String pw2 = newCustomerData.getPassword2();
-        if (!pw1.equals(pw2)){
+        if (!pw1.equals(pw2)) {
             message = "Passwords do not match";
         } else {
-            String customerId = newCustomerData.getCustomerIdentifier();
-            Customer foundCustomer = this.customerRepository.findCustomerByCustomerIdentifier(customerId);
-            if (foundCustomer != null){
-                message = "Customer with " + customerId + " already exists";
-            } else {
-                Customer customer = this.customerRequestMapper.requestModelToEntity(newCustomerData);
-                customer.setCustomerIdentifier(customerId);
-                customer.setPassword(newCustomerData.getPassword1());
-                this.customerRepository.save(customer);
-                message = "Customer saved successfully";
-
+            String customerId = UUID.randomUUID().toString();
+            while (this.customerRepository.findCustomerByCustomerIdentifier(customerId) != null) {
+                customerId = UUID.randomUUID().toString();
             }
+            Customer customer = this.customerRequestMapper.requestModelToEntity(newCustomerData);
+            customer.setCustomerIdentifier(customerId);
+            customer.setPassword(newCustomerData.getPassword1());
+            this.customerRepository.save(customer);
+
+            message = "Customer saved successfully";
         }
         return message;
     }
@@ -74,13 +75,17 @@ public class CustomerServiceImpl implements CustomerService{
     public String updateCustomer(String customerId, CustomerRequestModel newCustomerData) {
         String message = "";
         Customer foundCustomer = this.customerRepository.findCustomerByCustomerIdentifier(customerId);
-        if (foundCustomer == null){
+        if (foundCustomer == null) {
             message = "Customer with id: " + customerId + " not found in repository.";
         } else {
             String pw1 = newCustomerData.getPassword1();
             String pw2 = newCustomerData.getPassword2();
-            if (pw1 == null) { pw1 = ""; }
-            if (pw2 == null) { pw2 = ""; }
+            if (pw1 == null) {
+                pw1 = "";
+            }
+            if (pw2 == null) {
+                pw2 = "";
+            }
             if (pw1.equals(pw2)) {
                 Customer customer = this.customerRequestMapper.requestModelToEntity(newCustomerData);
                 customer.setPassword(newCustomerData.getPassword1());
@@ -100,7 +105,9 @@ public class CustomerServiceImpl implements CustomerService{
         if (foundCustomer == null) {
             message = "Customer with id: " + customerId + " not found in repository.";
         } else {
-            this.customerRepository.delete(foundCustomer);
+            orderRepository.deleteAll(orderRepository.findOrdersByCustomerIdentifier(customerId));
+            customerRepository.delete(foundCustomer);
+
             message = "Customer with id: " + customerId + " deleted successfully";
         }
         return message;
@@ -110,7 +117,7 @@ public class CustomerServiceImpl implements CustomerService{
     public List<CustomerResponseModel> getCustomersByProductId(String productId) {
         List<Order> orders = orderRepository.findCustomersByProductIdentifier(productId);
         List<CustomerResponseModel> customerResponseModels = new ArrayList<>();
-        for (Order order: orders) {
+        for (Order order : orders) {
             String customerId = order.getCustomerIdentifier();
             Customer customer = customerRepository.findCustomerByCustomerIdentifier(customerId);
             CustomerResponseModel customerResponseModel = customerResponseMapper.entityToResponseModel(customer);

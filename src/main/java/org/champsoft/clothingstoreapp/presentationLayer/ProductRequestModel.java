@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.champsoft.clothingstoreapp.dataAccessLayer.ProductStatus;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -15,7 +17,7 @@ public class ProductRequestModel {
     private String name;
     private String description;
     private String size;
-    private String price;
+    private BigDecimal price;
     private int quantity;
     private ProductStatus product_status;
 }

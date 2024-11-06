@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="customers")
+@Table(name = "customers")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -23,8 +23,8 @@ public class Customer {
     private String firstName;
     private String emailAddress;
 
-    private String  username;
-    private String  password;
+    private String username;
+    private String password;
 
     private String streetAddress;
     private String postalCode;

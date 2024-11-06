@@ -13,16 +13,13 @@ import java.math.BigDecimal;
 @Setter
 @Getter
 public class OrderRequestModel {
-    private String orderIdentifier;
-    private String customerIdentifier;
-    private String productIdentifier;
 
     //////IF THESE ARE REMOVED, UPDATING AN ORDER WILL MAKE THESE VALUES NULL/////
-//    private String name;
-//    private String price;
-//    private DeliveryStatus deliveryStatus;
-//    private BigDecimal totalPrice;
+    private String customerIdentifier;
+    private String productIdentifier;
+    private String name;
+    private BigDecimal shippingPrice;
+    private DeliveryStatus deliveryStatus;
     //////////////////////////////////////////////////////////////////////////////
 
-    private BigDecimal shippingPrice;
 }

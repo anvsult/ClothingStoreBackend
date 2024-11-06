@@ -1,6 +1,5 @@
 package org.champsoft.clothingstoreapp.businessLogicLayer;
 
-import org.champsoft.clothingstoreapp.dataAccessLayer.Order;
 import org.champsoft.clothingstoreapp.presentationLayer.OrderRequestModel;
 import org.champsoft.clothingstoreapp.presentationLayer.OrderResponseModel;
 

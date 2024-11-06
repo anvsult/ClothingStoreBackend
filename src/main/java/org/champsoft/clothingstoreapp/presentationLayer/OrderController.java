@@ -1,7 +1,5 @@
 package org.champsoft.clothingstoreapp.presentationLayer;
 
-import org.champsoft.clothingstoreapp.businessLogicLayer.CustomerService;
-import org.champsoft.clothingstoreapp.businessLogicLayer.CustomerServiceImpl;
 import org.champsoft.clothingstoreapp.businessLogicLayer.OrderService;
 import org.champsoft.clothingstoreapp.businessLogicLayer.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +9,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/orders")
+@CrossOrigin(origins = "http://localhost:3000") // Enables CORS for this controller only
 public class OrderController {
     private final OrderService orderService;
+
     @Autowired
     public OrderController(OrderServiceImpl orderService) {
         this.orderService = orderService;
@@ -28,16 +28,18 @@ public class OrderController {
         return this.orderService.getOrderById(order_id);
     }
 
-    @PostMapping("/add-order")
+    @PostMapping()
     public String addOrder(@RequestBody OrderRequestModel newOrderData) {
         return this.orderService.addOrder(newOrderData);
     }
+
     @PutMapping("/{order_id}")
-    public String updateOrder(@PathVariable String order_id, @RequestBody OrderRequestModel newOrderData){
+    public String updateOrder(@PathVariable String order_id, @RequestBody OrderRequestModel newOrderData) {
         return this.orderService.updateOrder(order_id, newOrderData);
     }
+
     @DeleteMapping("/{order_id}")
-    public String deleteOrder(@PathVariable String order_id){
+    public String deleteOrder(@PathVariable String order_id) {
         return orderService.deleteOrderByOrderId(order_id);
     }
 
